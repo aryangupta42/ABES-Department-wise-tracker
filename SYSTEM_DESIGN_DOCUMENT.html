@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>System Design Document - ABES Department Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 16mm 14mm 16mm 14mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      line-height: 1.55;
+      font-size: 13px;
+      padding: 20px;
+    }
+    .cover-card {
+      border: 2px solid #1e3a8a;
+      border-radius: 10px;
+      padding: 24px;
+      background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+      margin-bottom: 24px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 9999px;
+      background: #1e3a8a;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+      line-height: 1.25;
+    }
+    .subtitle {
+      font-size: 13.5px;
+      color: #475569;
+      margin-bottom: 16px;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      border-top: 1px solid #cbd5e1;
+      padding-top: 14px;
+      font-size: 12px;
+    }
+    .meta-item strong {
+      color: #1e3a8a;
+    }
+    h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 4px;
+      margin-top: 22px;
+      margin-bottom: 10px;
+    }
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e3a8a;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+    p {
+      margin-bottom: 10px;
+      color: #334155;
+    }
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 12px;
+      color: #334155;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 18px 0;
+      font-size: 11.5px;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 9px;
+      text-align: left;
+    }
+    th {
+      background-color: #1e3a8a;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    .formula-box {
+      background: #f1f5f9;
+      border-left: 4px solid #2563eb;
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      margin: 12px 0;
+      color: #0f172a;
+    }
+    .diagram-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 12px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.35;
+      color: #1e293b;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    .footer-note {
+      margin-top: 24px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+    }
+    .link-pill {
+      display: inline-block;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER CARD -->
+  <div class="cover-card">
+    <div class="badge">Official Technical Specification & System Design</div>
+    <h1>🏛️ SYSTEM DESIGN DOCUMENT (SDD)</h1>
+    <div class="subtitle">ABES Department Tracker — Centralized Academic & Department Monitoring SaaS Platform</div>
+    
+    <div class="meta-grid">
+      <div class="meta-item"><strong>Institution:</strong> ABES Engineering College (AKTU Code: 032)</div>
+      <div class="meta-item"><strong>Project Team:</strong> Aryan Gupta & Arsh Mittal (CSE 15)</div>
+      <div class="meta-item"><strong>Live Deployed URL:</strong> <a class="link-pill" href="https://abes-department-wise-tracker.onrender.com">https://abes-department-wise-tracker.onrender.com</a></div>
+      <div class="meta-item"><strong>GitHub Repository:</strong> <a class="link-pill" href="https://github.com/aryangupta42/ABES-Department-wise-tracker">github.com/aryangupta42/ABES-Department-wise-tracker</a></div>
+      <div class="meta-item"><strong>Academic Course:</strong> Full Stack Development (FSD) Capstone Project</div>
+      <div class="meta-item"><strong>Technology Stack:</strong> React 19, TypeScript, Tailwind CSS, Vite, Cloudflare, Render</div>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h2>1. Executive Summary & Problem Formulation</h2>
+  <p>Engineering institutions like ABES Engineering College manage multiple engineering branches (CSE, IT, ECE, ME, CE, AI/ML), thousands of enrolled students, hundreds of faculty members, and stringent NBA Tier-1 / NAAC 'A' accreditation audits. Traditional collegiate ERP software exhibits major operational deficiencies:</p>
+  <ul>
+    <li><strong>Data Silos:</strong> Attendance, results, syllabus coverage, duty leave approvals, and placement recruitment statistics are maintained in isolated systems or spreadsheets.</li>
+    <li><strong>Outdated UX:</strong> Non-responsive interfaces that do not function on mobile devices and lack real-time indicators.</li>
+    <li><strong>Absence of Department Health Visibility:</strong> HODs and college administration lack continuous algorithmic metrics to track student retention, faculty workload, and compliance margins.</li>
+  </ul>
+  <p><strong>ABES Department Tracker</strong> solves these challenges by providing a centralized, high-performance web platform connecting Students, Faculty Members, Heads of Department (HODs), and Central Administration (Super Admin) with instant role switching, real-time analytics, and automated compliance tracking.</p>
+
+  <!-- SECTION 2 -->
+  <h2>2. High-Level Architectural Design</h2>
+  <p>The system is built on a <strong>Modular Single Page Application (SPA) Architecture</strong> paired with an <strong>Observable Central Data Bus</strong>:</p>
+  <ul>
+    <li><strong>Presentation Layer:</strong> React 19 + TypeScript component hierarchy styled with Tailwind CSS enterprise tokens (navy #0a192f, tech blue #1b64e8).</li>
+    <li><strong>State & Computation Layer:</strong> Unified Context API (AuthContext and DataContext) managing persistent operational datasets and real-time computation engines.</li>
+    <li><strong>Persistence Engine:</strong> Browser localStorage document store ensuring state retention without backend downtime during client demonstrations.</li>
+    <li><strong>Edge Infrastructure:</strong> Static distribution artifacts deployed to Render with Cloudflare Edge proxying and SPA wildcard routing rewrites (/* -> /index.html).</li>
+  </ul>
+
+  <div class="diagram-box">
++-----------------------------------------------------------------------------------------+
+|                                    END USERS & ROLES                                    |
+|         [Super Admin / Director]    [HOD (CSE)]    [Faculty Member]    [Student]        |
++-----------------------------------------------------------------------------------------+
+                                             |
+                                             v  HTTPS / TLS 1.3
++-----------------------------------------------------------------------------------------+
+|                                 EDGE & DELIVERY LAYER                                   |
+|   Cloudflare Global CDN  <--->  Render Static Host  <--->  SPA Rewrite (/* -> /index)   |
++-----------------------------------------------------------------------------------------+
+                                             |
+                                             v
++-----------------------------------------------------------------------------------------+
+|                         APPLICATION LAYER (REACT 19 + TYPESCRIPT)                       |
+|   - React Router DOM v7 (Role-Based Protected Routes)                                    |
+|   - Unified State Engine: DataContext (Departments, Students, Attendance, Approvals)    |
+|   - Auth Engine: Multi-Role Session Manager with Persistent Demo Accounts               |
++-----------------------------------------------------------------------------------------+
+                                             |
+         +-----------------------------------+-----------------------------------+
+         |                                   |                                   |
+         v                                   v                                   v
++------------------+               +-------------------+               +------------------+
+| COMPUTATION CORE |               |  ROLE DASHBOARDS  |               |  PERSISTENCE     |
+| - Health Score   |               | - Super Admin     |               | - LocalStorage   |
+| - Attendance Calc| <-----------> | - HOD Portal      | <-----------> | - Demo Fixtures  |
+| - SGPA Simulator |               | - Faculty Hub     |               | - Cached Sessions|
+| - Approval Engine|               | - Student Portal  |               +------------------+
++------------------+               +-------------------+
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECTION 3 -->
+  <h2>3. Role-Based Access Control (RBAC) Specification</h2>
+  <p>The application implements strict Role-Based Access Control separating privileges across four institutional tiers:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Module / Capability</th>
+        <th>Super Admin (Director)</th>
+        <th>Head of Department (HOD)</th>
+        <th>Faculty Member</th>
+        <th>Student</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>College Overview Dashboard</strong></td>
+        <td>Full Management (R/W)</td>
+        <td>Department Scope</td>
+        <td>Read Only</td>
+        <td>Restricted</td>
+      </tr>
+      <tr>
+        <td><strong>Department Health Score</strong></td>
+        <td>Global Radar Comparison</td>
+        <td>Branch Health Breakdown</td>
+        <td>View Score</td>
+        <td>View Score</td>
+      </tr>
+      <tr>
+        <td><strong>Live Attendance Logger</strong></td>
+        <td>College-Wide Audit</td>
+        <td>Branch Oversight</td>
+        <td>Mark & Log (P/A)</td>
+        <td>View Personal Record</td>
+      </tr>
+      <tr>
+        <td><strong>Defaulter Warnings (&lt;75%)</strong></td>
+        <td>Institutional Summary</td>
+        <td>Branch Defaulter Alerts</td>
+        <td>Classroom Alert Flags</td>
+        <td>Real-Time Safe Margin</td>
+      </tr>
+      <tr>
+        <td><strong>Syllabus Progress Tracker</strong></td>
+        <td>Audit & Accreditations</td>
+        <td>Approve Completion</td>
+        <td>Log Weekly Units</td>
+        <td>View Study Schedule</td>
+      </tr>
+      <tr>
+        <td><strong>Assignment Lifecycle</strong></td>
+        <td>Submission Analytics</td>
+        <td>Department Overview</td>
+        <td>Create, Set & Grade</td>
+        <td>Upload & Check Scores</td>
+      </tr>
+      <tr>
+        <td><strong>Results & SGPA Simulator</strong></td>
+        <td>Pass % Analytics</td>
+        <td>Semester Breakdown</td>
+        <td>Internal Marks Entry</td>
+        <td>Interactive Simulator</td>
+      </tr>
+      <tr>
+        <td><strong>T&P Placement Drives</strong></td>
+        <td>Institutional Stats</td>
+        <td>Branch Placement %</td>
+        <td>Mentorship Pipeline</td>
+        <td>Apply & Track Drives</td>
+      </tr>
+      <tr>
+        <td><strong>Digital Approval Workflow</strong></td>
+        <td>Final Sanctioning</td>
+        <td>HOD Verification</td>
+        <td>Submit OD/Duty Leave</td>
+        <td>Submit Medical Leave</td>
+      </tr>
+      <tr>
+        <td><strong>AI Campus Assistant</strong></td>
+        <td>Admin & Policy FAQs</td>
+        <td>Branch Circulars</td>
+        <td>Academic Queries</td>
+        <td>Student FAQs & Rules</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 4 -->
+  <h2>4. Subsystem & Module Deep Dive</h2>
+
+  <h3>4.1 Department Health Score (DHS) Index</h3>
+  <p>To evaluate departmental performance objectively, the platform calculates a weighted index from 0 to 100:</p>
+  <div class="formula-box">
+    Health Score (H_D) = 0.35 * A_avg + 0.30 * P_conv + 0.20 * S_sfr + 0.15 * C_syl
+  </div>
+  <p>Where <code>A_avg</code> is average student attendance, <code>P_conv</code> is placement drive conversion percentage, <code>S_sfr</code> is compliance against the AICTE 1:15 Student-Faculty Ratio standard, and <code>C_syl</code> is the real-time syllabus completion velocity.</p>
+
+  <h3>4.2 AKTU Statutory Attendance Margin & Defaulter Engine</h3>
+  <p>In accordance with Dr. A.P.J. Abdul Kalam Technical University (AKTU) guidelines, students must maintain &ge;75% attendance to sit for end-semester exams. The student dashboard computes a real-time lecture margin:</p>
+  <div class="formula-box">
+    Attendance Margin = floor( (Attended - 0.75 * Total_Lectures) / 0.75 )
+  </div>
+  <p>A positive margin indicates how many consecutive lectures a student can safely miss without falling below the threshold; a negative margin triggers caution notifications.</p>
+
+  <h3>4.3 Digital Approval Workflow State Machine</h3>
+  <div class="diagram-box">
+[Applicant Initiates] ---> (Status: Submitted)
+                                  |
+                                  v
+                        [Faculty Advisor Review]
+                         /                    \
+     (Approved & Endorsed)                    (Rejected)
+               |                                   |
+               v                                   v
+      [HOD Verification]                  [Applicant Notified]
+       /              \
+ (Approved)        (Rejected)
+     |                 |
+     v                 v
+[Director / Admin] [Applicant Notified]
+  Sanctions
+     |
+     v
+(Status: Sanctioned & Archived)
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECTION 5 -->
+  <h2>5. Entity-Relationship & Data Model Specification</h2>
+  <p>The core entities and their relationships managed within the application state:</p>
+
+  <div class="diagram-box">
++------------------+         1:N         +------------------+
+|    DEPARTMENT    | ------------------- |     STUDENT      |
+|------------------|                     |------------------|
+| id (PK)          |                     | id (PK)          |
+| code (e.g. CSE)  |                     | rollNumber       |
+| name             |                     | name, email      |
+| hodName          |                     | departmentCode   |
+| studentStrength  |                     | currentSGPA      |
+| avgAttendance    |                     | overallAttendance|
+| healthScore      |                     +------------------+
++------------------+                              |
+        | 1:N                                     | 1:N
+        v                                         v
++------------------+                     +------------------+
+|     FACULTY      |                     | ATTENDANCE_LOG   |
+|------------------|                     |------------------|
+| id (PK)          |                     | id (PK)          |
+| employeeId       |                     | studentId (FK)   |
+| name, email      |                     | subjectCode      |
+| designation      |                     | date, lectureSlot|
+| departmentCode   |                     | status (P / A)   |
++------------------+                     +------------------+
+  </div>
+
+  <!-- SECTION 6 -->
+  <h2>6. UI/UX Design System & Ergonomics</h2>
+  <ul>
+    <li><strong>SaaS Visual Language:</strong> Inspired by contemporary platforms (Stripe, Linear, Notion) avoiding legacy ERP clutter.</li>
+    <li><strong>Color Palette:</strong> Navy #0a192f / #0f172a primary, Tech Blue #1b64e8 accent, Emerald #10b981 success, Amber #f59e0b warning, Rose #ef4444 error.</li>
+    <li><strong>Typography:</strong> Google Fonts Plus Jakarta Sans for high-legibility UI typography, paired with JetBrains Mono for academic IDs and numeric data.</li>
+    <li><strong>Accessibility:</strong> Full responsive layout across desktop, tablet, and mobile with light and dark mode toggles.</li>
+  </ul>
+
+  <!-- SECTION 7 -->
+  <h2>7. Deployment, Hosting & Routing Architecture</h2>
+  <ul>
+    <li><strong>Continuous Deployment:</strong> Connected to GitHub repository <code>aryangupta42/ABES-Department-wise-tracker</code>. Every push triggers an automated build on Render.</li>
+    <li><strong>Build Optimization:</strong> Vite 6 optimizes and minifies assets into <code>dist/assets/</code> (CSS: 58.9 kB, JS: 1,062 kB / 277 kB gzip).</li>
+    <li><strong>SPA Routing Resolution:</strong> Configured with <code>public/_redirects</code> and an automated postbuild script generating <code>dist/404.html</code>, preventing 404 errors on browser refresh or direct route sharing.</li>
+  </ul>
+
+  <!-- SECTION 8 -->
+  <h2>8. Verified Demo Credentials for Evaluation</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Role</th>
+        <th>Email / College ID</th>
+        <th>Password</th>
+        <th>Designation / Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Super Admin</strong></td>
+        <td><code>director@abes.ac.in</code></td>
+        <td><code>abes@demo2026</code></td>
+        <td>Director / Central Administration</td>
+      </tr>
+      <tr>
+        <td><strong>HOD</strong></td>
+        <td><code>hod.cse@abes.ac.in</code></td>
+        <td><code>abes@demo2026</code></td>
+        <td>HOD Computer Science & Engg.</td>
+      </tr>
+      <tr>
+        <td><strong>Faculty</strong></td>
+        <td><code>faculty.sharma@abes.ac.in</code></td>
+        <td><code>abes@demo2026</code></td>
+        <td>Assoc. Professor, CSE Dept.</td>
+      </tr>
+      <tr>
+        <td><strong>Student</strong></td>
+        <td><code>student.varun@abes.ac.in</code></td>
+        <td><code>abes@demo2026</code></td>
+        <td>B.Tech CSE, 3rd Year (Roll: 2200320100145)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- FOOTER NOTE -->
+  <div class="footer-note">
+    <strong>Developed & Maintained By:</strong> Team Member 1: Aryan Gupta | Team Member 2: Arsh Mittal | Branch: CSE, Section: CSE 15<br>
+    <strong>Full Stack Development Team</strong> | © 2026 ABESEC Ghaziabad. All Rights Reserved.
+  </div>
+
+</body>
+</html>
