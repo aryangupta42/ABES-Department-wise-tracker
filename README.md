@@ -15,6 +15,7 @@
 
 - **Render Live URL:** [https://abes-department-wise-tracker.onrender.com](https://abes-department-wise-tracker.onrender.com)
 - **GitHub Repository:** [https://github.com/aryangupta42/ABES-Department-wise-tracker.git](https://github.com/aryangupta42/ABES-Department-wise-tracker.git)
+- **Architecture & System Design:** [SYSTEM_DESIGN_DOCUMENT.md](./SYSTEM_DESIGN_DOCUMENT.md)
 
 ---
 
